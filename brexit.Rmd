@@ -63,7 +63,7 @@ ggplot(brexit, aes(y = opinion, fill = opinion)) +
   geom_bar() +
   facet_wrap(~region,
     nrow = 1, labeller = label_wrap_gen(width = 12),
-    # ___
+    scales = "free_x"
   ) +
   guides(fill = FALSE) +
   labs(
@@ -87,7 +87,33 @@ How is the story this visualisation telling different than the story the origina
 **Hint:** You'll need the **scales** package to improve axis labeling, which means you'll need to load it on top of the document as well.
 
 ```{r}
-# code goes here
+brexit<- brexit %>%
+  group_by(region, opinion) %>%
+  summarize(n = n()) %>%
+  mutate(prop = n/sum(n)) 
+str(brexit_prop)
+
+brexit %>% 
+  ggplot(aes(x = prop,y=opinion, fill = opinion)) +
+  geom_bar(stat = "identity") +
+  facet_wrap( ~region, nrow = 1, labeller = label_wrap_gen(width = 3)) + 
+  guides(fill = FALSE) +
+  labs( 
+    title = "Was Britain right/wrong to vote to leave EU?",
+    subtitle = "YouGov Survey Results, 2-3 September 2019",
+    caption = "Source: bit.ly/2lCJZVg",
+    x = NULL, y = NULL
+  ) + 
+    scale_x_continuous(labels = scales::percent) +
+    scale_fill_manual(values = c(
+    "Wrong" = "#ef8a62",
+    "Right" = "#67a9cf",
+    "Don't know" = "gray"
+  )) +
+  theme_minimal()
+
+
+?geom_bar()
 ```
 
 ### Exercise 3 - Comparing proportions across bars
@@ -96,5 +122,45 @@ Recreate the same visualisation from the previous exercise, this time dodging th
 How is the story this visualisation telling different than the story the previous plot tells?
 
 ```{r}
-# code goes here
+brexit %>% 
+  ggplot(aes(x = prop,y=opinion, fill = opinion)) +
+  geom_bar(stat = "identity", position="dodge") +
+  guides(fill = FALSE) +
+  labs( 
+    title = "Was Britain right/wrong to vote to leave EU?",
+    subtitle = "YouGov Survey Results, 2-3 September 2019",
+    caption = "Source: bit.ly/2lCJZVg",
+    x = NULL, y = NULL
+  ) + 
+    scale_x_continuous(labels = scales::percent) +
+    scale_fill_manual(values = c(
+    "Wrong" = "#ef8a62",
+    "Right" = "#67a9cf",
+    "Don't know" = "gray", guide=guide_legend(title="reg")
+  )) +
+  theme_minimal()
+
+
 ```
+
+##
+```{r}
+p = ggplot() + 
+  geom_histogram(aes(x = carat), data = diamonds)
+
+
+#p$layers
+
+#mapping: x = ~carat 
+#geom_bar: na.rm = FALSE, orientation = NA
+#stat_bin: binwidth = NULL, bins = NULL, na.rm = #FALSE, orientation = NA, pad = FALSE
+#position_stack 
+
+p_again = ggplot() + 
+  layer(data=diamonds, mapping=aes(x=carat, alpha=0.3),geom="bar", stat = "bin", position="stack")
+
+
+
+```
+
+##hi

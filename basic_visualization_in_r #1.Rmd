@@ -1,0 +1,139 @@
+---
+title: "basic_visualization_in_r #1"
+output: html_document
+---
+##reference: R graphics cookbook, Winston Chang 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This file will briefly cover the basic syntax of visualiztion
+
+First, library, and our example data frame 
+
+```{r cars}
+library(tidyverse)
+
+id=1:10
+age=c(30,30,37,35,33,30,30,37,35,33)
+gender=c("f","f","f","f","f","m","m","m","m","m")
+weight=c(155,177,NA,144,199,180,199,166,168,176)
+university=c("Duke","WFU","UNC","Duke","WFU","UNC","WFU","Duke","UNC","WFU")
+height=c(80,34,56,34,98,80,34,56,34,98)
+DF2=data.frame(id,age,gender,weight,university,height,stringsAsFactors = TRUE)
+str(DF2)
+DF2
+
+
+```
+
+## The basic 1
+
+The basic bar graph syntax is as following:
+
+ggplot(dataframe, aes(x= your x varialbe ))+
+geom_bar()
+
+we can start from this syntax. 
+
+```{r}
+ggplot(DF2, aes(x=id)) +
+  geom_bar()
+
+
+```
+## further step 1
+
+In the above example, we did not assigned y-axis. In this case, the default y is the number of the events that belongs to each x.
+What about we want to assign x variable and y variable? 
+
+in this case, you shoud assign your y value in aes(),
+and in the geom_bar(stat="identity")
+
+the default is geom_bar(stat="bin"). 
+```{r}
+
+ggplot(DF2, aes(x=id, y=height)) +
+  geom_bar(stat="identity")
+
+```
+
+Let's say that you don't want the black color. 
+in the geom_bar(), you can assign your color, and the outline color. 
+
+fill=the color of the bar
+color= the color of the outline. 
+
+```{r}
+
+ggplot(DF2, aes(x=id, y=height)) +
+  geom_bar(stat="identity", fill="blue", color="green")
+
+```
+
+##further step 2
+
+you want to present second variable, and want to tie the graph with this variable. 
+
+than, in the ggplot(), you should add that variable using fill= argument. Dont' forget to add position="dodge" in the geom_bar()
+```{r}
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity",  position="dodge")
+
+```
+
+If you really want that green outline, you can always put that. 
+
+```{r}
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity",  position="dodge", color="green")
+
+```
+
+still don't like your graph color?
+
+use scale_fill_brewer() or scale_fill_manual()
+
+```{r}
+
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity",  position="dodge", colour="green") +
+  scale_fill_brewer(palette="Pastel3")
+
+# looks good? 
+  
+
+```
+
+```{r}
+
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity", color="black", size=0.4) # you can assign the outline size. 
+
+
+```
+you can also remove that guide. 
+````{r}
+
+
+
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity", color="black", size=0.4) +
+  scale_fill_brewer(palette="pastel3", guide=FALSE)
+
+
+```
+
+## label in the bar graph? 
+
+```{r}
+
+ggplot(DF2, aes(x=university, y=height, fill=gender)) +
+  geom_bar(stat="identity",  position="dodge") +
+  geom_text(aes(label=height))
+```
